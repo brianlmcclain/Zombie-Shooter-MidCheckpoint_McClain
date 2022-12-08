@@ -1,17 +1,14 @@
 class Settings:
     def __init__(self):
-        self.screen_width = 800
+        """Initializes and creates constants and resources used by the rest of the game"""
+        self.screen_width = 1200
         self.screen_height = 800
         self.bg_color = (255, 255, 255)
-        self.player_speed = 1.0
-        self.bullet_speed = 1.5
+        self.player_speed = 1.2
+        self.bullet_speed = 2.0
         self.bullet_width = 5
-        self.bullet_height = 25
+        self.bullet_height = 5
         self.bullet_color = (0,0,0)
-        self.bullets_allowed = 3
-        self.zombie_speed = .7
-        self.zombie1_health = 3
-        self.zombie2_health = 5
-        self.zombie3_health = 5
-        self.zombieboss_health = 40
-
+        self.bullets_allowed = 15
+        self.zombie_speed = 1
+        self.zombie_health = 3

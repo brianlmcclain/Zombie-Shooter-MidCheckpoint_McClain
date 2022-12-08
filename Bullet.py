@@ -3,6 +3,7 @@ from pygame.sprite import Sprite
 
 class bullet(Sprite):
     def __init__(self, ai_game):
+        """Initializes the bullet and creates all of its necesary resources"""
         super().__init__()
         self.screen = ai_game.screen
         self.settings = ai_game.settings
@@ -13,6 +14,8 @@ class bullet(Sprite):
         self.mouse_click_x = ai_game.mouse_click_x
         self.mouse_click_y = ai_game.mouse_click_y
 
+        self.curr_player_x, self.curr_player_y = ai_game.curr_player_x, ai_game.curr_player_y
+
 
         self.rect.centerx = self.player.rect.centerx
         self.rect.centery = self.player.rect.centery
@@ -21,8 +24,9 @@ class bullet(Sprite):
         self.x = float(self.rect.x)
 
     def update(self):
-        dx = (self.mouse_click_x - self.player.rect.x) * 0.001
-        dy = (self.mouse_click_y - self.player.rect.y) * 0.001
+        """defines the travel of the bullet and speed"""
+        dx = (self.mouse_click_x - self.curr_player_x) * 0.001
+        dy = (self.mouse_click_y - self.curr_player_y) * 0.001
 
         self.x += self.settings.bullet_speed * dx
         self.y += self.settings.bullet_speed * dy
