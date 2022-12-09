@@ -23,6 +23,7 @@ class ZombieShooter:
         self.Zombie = zombie(self)
         self.bullets = pygame.sprite.Group()
         self.zombies = pygame.sprite.Group()
+        self.Players = pygame.sprite.Group()
         self.angle = 90
         self.angle_bullet = self.angle
         self.mouse_click_x, self.mouse_click_y = 0, 0
@@ -32,10 +33,9 @@ class ZombieShooter:
         self.zombie1_health = self.zombie_health
 
         self.clock = pygame.time.Clock()
-        self.base_font = pygame.font.Font('28 Days Later.ttf', 70)
-        self.user_text = 'Space to Survive the Zombie'
-        self.win_text = 'You Win'
-        self.dead_txt = 'You Lose'
+        self.base_font = pygame.font.Font('28 Days Later.ttf', 45)
+        self.user_text = '*Space to Survive the Zombie*'
+        self.extra_text = '*Shoot it as many times as you can before it catches up*'
         self.input_rect = pygame.Rect(200, 360, 380, 0)
         self.color_active = pygame.Color('lightskyblue3')
         self.color_passive = pygame.Color('chartreuse4')
@@ -43,6 +43,8 @@ class ZombieShooter:
         self.active = False
         self.s = 0
         self.bullet_zombie_collision = False
+
+        self.score = 0
 
 
         se.backgroundsound.play(loops=-1)
@@ -68,14 +70,21 @@ class ZombieShooter:
                 else:
                     self.color = self.color_passive
                 pygame.draw.rect(self.screen, self.color, self.input_rect)
-                text_surface = self.base_font.render(self.user_text, True, (255, 255, 255))
-                self.screen.blit(text_surface, (self.input_rect.x + 5, self.input_rect.y + 5))
-                self.input_rect.w = max(100, text_surface.get_width() + 10)
+
+                text_surface1 = self.base_font.render(self.user_text, True, (255, 255, 255))
+                self.screen.blit(text_surface1, (self.input_rect.x + 20, self.input_rect.y + 5))
+                self.input_rect.w = max(100, text_surface1.get_width() + 10)
+
+                text_surface2 = self.base_font.render(self.extra_text, True, (255, 255, 255))
+                self.screen.blit(text_surface2, (self.input_rect.x - 150, self.input_rect.y + 60))
+                self.input_rect.w = max(100, text_surface2.get_width() + 10)
+
                 pygame.display.flip()
                 self.clock.tick(60)
             elif self.s == 1:
                 self._check_events()
                 self._check_bullet_zombie_collisions()
+                self._check_zombie_player_collisions()
                 self.Player.update()
                 self._update_screen()
                 self.Zombie.rotate_zombie(self.Player)
@@ -149,11 +158,23 @@ class ZombieShooter:
         self.zombies.add(self.Zombie)
         collisions = pygame.sprite.groupcollide(self.bullets, self.zombies, True, True)
         if collisions:
-            print("Yes")
             self.bullet_zombie_collision = True
-            self.zombie1_health -= 1
-            if self.zombie1_health == 0:
-                self.zombies.remove(self.Zombie)
+            self.score += 1
+            self.settings.zombie_speed += .05
+
+    def _check_zombie_player_collisions(self):
+        """Define the Player on Zombie collision and cause you to lose if the zombie touches you."""
+        self.zombies.add(self.Zombie)
+        collision = pygame.sprite.collide_rect(self.Player, self.Zombie)
+        if collision:
+            print("Game Over")
+            sys.exit()
+
+    def show_score(self):
+        """Code used to construst the score/hit board"""
+        """I was helped by Eli Watson"""
+        score_txt = self.base_font.render("Hits*" + str(self.score), True, (133,133,133))
+        self.screen.blit(score_txt, (80,80))
 
 
     def _update_screen(self):
@@ -161,6 +182,7 @@ class ZombieShooter:
         self.screen.fill(self.settings.bg_color)
         self.Player.blitme()
         self.Zombie.blitme()
+        self.show_score()
         for bullet in self.bullets.sprites():
             bullet.draw_bullet()
         pygame.display.flip()

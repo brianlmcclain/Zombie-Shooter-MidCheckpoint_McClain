@@ -11,4 +11,4 @@ class Settings:
         self.bullet_color = (0,0,0)
         self.bullets_allowed = 15
         self.zombie_speed = 1
-        self.zombie_health = 3
+        self.zombie_health = 0
